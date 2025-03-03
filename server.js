@@ -87,13 +87,16 @@ async function getClientDetails(token, clientCode) {
         console.log("Risposta parsata (getClientDetails):", result); // Debug
 
         // Verifica che la risposta contenga i dati attesi
-        if (!result.string || !result.string[0] || !result.string[0]._) {
+        if (!result.string || !result.string._) {
             throw new Error("Dettagli del cliente non trovati nella risposta XML.");
         }
 
         // Estrai i dettagli del cliente dalla stringa JSON
-        const clientDetailsString = result.string[0]._;
+        const clientDetailsString = result.string._;
+        console.log("Stringa JSON estratta:", clientDetailsString); // Debug
+
         const clientDetails = JSON.parse(clientDetailsString);
+        console.log("Dettagli del cliente parsati:", clientDetails); // Debug
 
         // Verifica che i dettagli del cliente siano un array
         if (!Array.isArray(clientDetails) || clientDetails.length < 2) {

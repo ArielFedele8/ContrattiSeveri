@@ -75,6 +75,13 @@
                 border-radius: 6px;
                 background-color: #f8f9fa;
                 font-size: 16px;
+                transition: border-color 0.3s, box-shadow 0.3s;
+            }
+            .form-group input:focus,
+            select:focus {
+                border-color: #004a99;
+                box-shadow: 0 0 5px rgba(0, 74, 153, 0.5);
+                outline: none;
             }
             .btn {
                 display: block;
@@ -108,6 +115,50 @@
                 background-color: #f8d7da;
                 color: #721c24;
             }
+            /* Stile personalizzato per il menù a tendina */
+.custom-select {
+    position: relative;
+    width: 100%;
+    margin-bottom: 20px; /* Spaziatura inferiore */
+}
+
+.custom-select select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: #f8f9fa;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    color: #004a99;
+    font-family: "Roboto", sans-serif;
+    font-weight: 500;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.custom-select select:hover {
+    border-color: #004a99;
+}
+
+.custom-select select:focus {
+    border-color: #004a99;
+    box-shadow: 0 0 5px rgba(0, 74, 153, 0.5);
+    outline: none;
+}
+
+.custom-select::after {
+    content: "▼";
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #004a99;
+    font-size: 12px;
+}
         </style>
     </head>
     <body>
@@ -131,9 +182,11 @@
             <!-- Area per il messaggio di esito -->
 
             <h2>Seleziona un Cliente</h2>
-            <select id="clientSelect">
-                <option value="">-- Seleziona un cliente --</option>
-            </select>
+            <div class="custom-select">
+                <select id="clientSelect">
+                    <option value="">-- SELEZIONA UN CLIENTE --</option>
+                </select>
+            </div>
 
             <h2>Contratti Attivi</h2>
             <table id="contractTable">
@@ -270,107 +323,107 @@
 
             // Funzione per visualizzare i contratti attivi del cliente selezionato
             async function displayContracts(selectedClient) {
-    try {
-        // Ottieni username e password dai campi di input
-        const username = document.getElementById("username").value;
-        const password = document.getElementById("password").value;
+                try {
+                    // Ottieni username e password dai campi di input
+                    const username = document.getElementById("username").value;
+                    const password = document.getElementById("password").value;
 
-        if (!username || !password) {
-            showMessage("Inserisci username e password.", false);
-            return;
-        }
+                    if (!username || !password) {
+                        showMessage("Inserisci username e password.", false);
+                        return;
+                    }
 
-        // Ottieni il token
-        const tokenResponse = await fetch(
-            `/getToken?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`,
-        );
-        const { token } = await tokenResponse.json();
+                    // Ottieni il token
+                    const tokenResponse = await fetch(
+                        `/getToken?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`,
+                    );
+                    const { token } = await tokenResponse.json();
 
-        // Ottieni i dati dei clienti e dei contratti
-        const clientDataResponse = await fetch(
-            `/getClientData?token=${token}`,
-        );
-        const { contracts } = await clientDataResponse.json();
+                    // Ottieni i dati dei clienti e dei contratti
+                    const clientDataResponse = await fetch(
+                        `/getClientData?token=${token}`,
+                    );
+                    const { contracts } = await clientDataResponse.json();
 
-        // Filtra i contratti per il cliente selezionato
-        const filteredContracts = contracts.filter(
-            (contract) => contract[3] === selectedClient,
-        );
+                    // Filtra i contratti per il cliente selezionato
+                    const filteredContracts = contracts.filter(
+                        (contract) => contract[3] === selectedClient,
+                    );
 
-        // Popola la tabella
-        const tableBody = document.querySelector(
-            "#contractTable tbody",
-        );
-        tableBody.innerHTML = "";
+                    // Popola la tabella
+                    const tableBody = document.querySelector(
+                        "#contractTable tbody",
+                    );
+                    tableBody.innerHTML = "";
 
-        let totalAmount = 0;
+                    let totalAmount = 0;
 
-        filteredContracts.forEach((contract) => {
-            const quantity = parseFloat(contract[5]);
-            const price = parseFloat(contract[6]);
-            const total = quantity * price;
+                    filteredContracts.forEach((contract) => {
+                        const quantity = parseFloat(contract[5]);
+                        const price = parseFloat(contract[6]);
+                        const total = quantity * price;
 
-            totalAmount += total;
+                        totalAmount += total;
 
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${contract[4]}</td>
-                <td>${quantity}</td>
-                <td>${price.toFixed(2)}</td>
-                <td>${total.toFixed(2)}</td>
-            `;
-            tableBody.appendChild(row);
-        });
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
+                            <td>${contract[4]}</td>
+                            <td>${quantity}</td>
+                            <td>${price.toFixed(2)}</td>
+                            <td>${total.toFixed(2)}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
 
-        // Aggiorna il totale generale
-        document.getElementById("totalAmount").textContent =
-            totalAmount.toFixed(2);
+                    // Aggiorna il totale generale
+                    document.getElementById("totalAmount").textContent =
+                        totalAmount.toFixed(2);
 
-        // Ottieni i dettagli del cliente e compila il form
-        const clientCode = filteredContracts[0][2]; // Codice cliente
-        const clientDetailsResponse = await fetch(
-            `/getClientDetails?token=${token}&clientCode=${clientCode}`,
-        );
-        const { clientDetails } = await clientDetailsResponse.json();
+                    // Ottieni i dettagli del cliente e compila il form
+                    const clientCode = filteredContracts[0][2]; // Codice cliente
+                    const clientDetailsResponse = await fetch(
+                        `/getClientDetails?token=${token}&clientCode=${clientCode}`,
+                    );
+                    const { clientDetails } = await clientDetailsResponse.json();
 
-        // Debug: Verifica i dettagli del cliente
-        console.log("Dettagli del cliente:", clientDetails);
+                    // Debug: Verifica i dettagli del cliente
+                    console.log("Dettagli del cliente:", clientDetails);
 
-        // Controlla se clientDetails è definito e ha la struttura attesa
-        if (!clientDetails || !Array.isArray(clientDetails)) {
-            throw new Error("Dettagli del cliente non validi o incompleti.");
-        }
+                    // Controlla se clientDetails è definito e ha la struttura attesa
+                    if (!clientDetails || !Array.isArray(clientDetails)) {
+                        throw new Error("Dettagli del cliente non validi o incompleti.");
+                    }
 
-        // Compila il form con i dettagli del cliente
-        document.getElementById("ragioneSociale").value =
-            clientDetails[1] || ""; // Ragione Sociale
-        document.getElementById("indirizzo").value =
-            clientDetails[2] || ""; // Indirizzo
-        document.getElementById("cap").value = clientDetails[3] || ""; // CAP
-        document.getElementById("localita").value =
-            clientDetails[4] || ""; // Località
-        document.getElementById("provincia").value =
-            clientDetails[5] || ""; // Provincia
-        document.getElementById("partitaIva").value =
-            clientDetails[6] || ""; // Partita IVA
-        document.getElementById("codiceFiscale").value =
-            clientDetails[7] || ""; // Codice Fiscale
-        document.getElementById("telefono").value =
-            clientDetails[8] || ""; // Telefono
-        document.getElementById("email").value =
-            clientDetails[10] || ""; // Email
-        document.getElementById("banca").value =
-            clientDetails[11] || ""; // Banca
-        document.getElementById("iban").value =
-            clientDetails[12] || ""; // IBAN
-    } catch (error) {
-        console.error("Errore:", error);
-        showMessage(
-            "Errore durante il caricamento dei contratti o dei dettagli del cliente.",
-            false,
-        );
-    }
-}
+                    // Compila il form con i dettagli del cliente
+                    document.getElementById("ragioneSociale").value =
+                        clientDetails[1] || ""; // Ragione Sociale
+                    document.getElementById("indirizzo").value =
+                        clientDetails[2] || ""; // Indirizzo
+                    document.getElementById("cap").value = clientDetails[3] || ""; // CAP
+                    document.getElementById("localita").value =
+                        clientDetails[4] || ""; // Località
+                    document.getElementById("provincia").value =
+                        clientDetails[5] || ""; // Provincia
+                    document.getElementById("partitaIva").value =
+                        clientDetails[6] || ""; // Partita IVA
+                    document.getElementById("codiceFiscale").value =
+                        clientDetails[7] || ""; // Codice Fiscale
+                    document.getElementById("telefono").value =
+                        clientDetails[8] || ""; // Telefono
+                    document.getElementById("email").value =
+                        clientDetails[10] || ""; // Email
+                    document.getElementById("banca").value =
+                        clientDetails[11] || ""; // Banca
+                    document.getElementById("iban").value =
+                        clientDetails[12] || ""; // IBAN
+                } catch (error) {
+                    console.error("Errore:", error);
+                    showMessage(
+                        "Errore durante il caricamento dei contratti o dei dettagli del cliente.",
+                        false,
+                    );
+                }
+            }
 
             // Funzione per generare il PDF
             function generatePDF(

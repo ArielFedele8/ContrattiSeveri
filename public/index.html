@@ -201,7 +201,109 @@
                     showMessage("Errore durante il caricamento dei contratti o dei dettagli del cliente.", false);
                 }
             }
+            
+            function generatePDF(
+                ragioneSociale,
+                indirizzo,
+                cap,
+                localita,
+                provincia,
+                partitaIva,
+                codiceFiscale,
+                telefono,
+                email,
+                banca,
+                iban,
+            ) {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({ unit: "mm", format: "a4" });
 
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(16);
+                doc.text("CONTRATTO DI ASSISTENZA SOFTWARE", 105, 20, {
+                    align: "center",
+                });
+
+                doc.setFontSize(12);
+                doc.setFont("helvetica", "normal");
+                doc.text(`Ragione Sociale: ${ragioneSociale}`, 20, 40);
+                doc.text(`Indirizzo: ${indirizzo}`, 20, 50);
+                doc.text(
+                    `CAP: ${cap} - Località: ${localita} - Provincia: ${provincia}`,
+                    20,
+                    60,
+                );
+                doc.text(`Partita IVA: ${partitaIva}`, 20, 70);
+                doc.text(`Codice Fiscale: ${codiceFiscale}`, 20, 80);
+                doc.text(`Telefono/Fax: ${telefono}`, 20, 90);
+                doc.text(`E-Mail: ${email}`, 20, 100);
+                doc.text(`Banca: ${banca}`, 20, 110);
+                doc.text(`IBAN: ${iban}`, 20, 120);
+
+                doc.setFont("helvetica", "bold");
+                doc.text("Dettagli del contratto:", 20, 130);
+
+                // Inserimento tabella contratti
+                const tableStartY = 140; // Posizione iniziale della tabella
+                const tableColumnWidths = [70, 30, 30, 30];
+                let tableRowY = tableStartY;
+
+                // Intestazione della tabella
+                doc.setFillColor(0, 74, 153);
+                doc.setTextColor(255, 255, 255);
+                doc.rect(20, tableRowY - 5, 160, 8, "F");
+                doc.text("Articolo", 25, tableRowY);
+                doc.text("Quantità", 95, tableRowY);
+                doc.text("Prezzo", 125, tableRowY);
+                doc.text("Totale", 155, tableRowY);
+
+                // Contenuto della tabella
+                doc.setFont("helvetica", "normal");
+                doc.setTextColor(0, 0, 0);
+
+                const rows = document.querySelectorAll(
+                    "#contractTable tbody tr",
+                );
+                let totalAmount = 0;
+
+                rows.forEach((row, index) => {
+                    const cols = row.querySelectorAll("td");
+                    const articolo = cols[0].innerText;
+                    const quantita = cols[1].innerText;
+                    const prezzo = cols[2].innerText;
+                    const totale = cols[3].innerText;
+
+                    totalAmount += parseFloat(totale);
+
+                    tableRowY += 10; // Aumenta la coordinata Y per ogni riga
+                    doc.text(articolo, 25, tableRowY);
+                    doc.text(quantita, 105, tableRowY, { align: "right" });
+                    doc.text(prezzo, 135, tableRowY, { align: "right" });
+                    doc.text(totale, 165, tableRowY, { align: "right" });
+                });
+
+                // Aggiungi spazio extra dopo l'ultima riga della tabella
+                tableRowY += 15; // Aumenta ulteriormente la coordinata Y per il "Totale Generale"
+
+                // Totale generale
+                doc.setFont("helvetica", "bold");
+                doc.text("Totale Generale:", 110, tableRowY); // Spostato a sinistra
+                doc.text(`${totalAmount.toFixed(2)} €`, 165, tableRowY, {
+                    align: "right",
+                }); // Allineato a destra
+
+                // Firma
+                tableRowY += 20; // Aggiungi spazio extra prima della firma
+                doc.text("Firma del Cliente", 20, tableRowY);
+                doc.line(20, tableRowY + 5, 80, tableRowY + 5);
+
+                doc.text("Firma della Società", 120, tableRowY);
+                doc.line(120, tableRowY + 5, 180, tableRowY + 5);
+
+                // Salva il PDF
+                doc.save(`Contratto_${ragioneSociale}.pdf`);
+            }
+            
             // Aggiungi un listener per la selezione del cliente
             document.getElementById("clientSelect").addEventListener("change", async (event) => {
                 const selectedClient = event.target.value;

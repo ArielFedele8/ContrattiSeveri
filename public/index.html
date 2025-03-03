@@ -4,162 +4,7 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Severi - CRM Integration</title>
-        <style>
-            body {
-                font-family: "Roboto", sans-serif;
-                margin: 0;
-                padding: 0;
-                background-color: #eef1f5;
-                color: #333;
-            }
-            header {
-                background-color: #004a99;
-                color: white;
-                padding: 20px;
-                text-align: center;
-                box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-            }
-            header img {
-                max-width: 350px;
-            }
-            .container {
-                max-width: 1100px;
-                margin: 40px auto;
-                padding: 30px;
-                background-color: white;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                border-radius: 10px;
-            }
-            h1,
-            h2 {
-                color: #004a99;
-                text-align: center;
-                font-weight: bold;
-            }
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                margin: 20px 0;
-                background: white;
-                border-radius: 10px;
-                overflow: hidden;
-            }
-            th,
-            td {
-                border: 1px solid #ddd;
-                padding: 12px;
-                text-align: left;
-            }
-            th {
-                background-color: #004a99;
-                color: white;
-            }
-            tfoot td {
-                font-weight: bold;
-                background-color: #e9ecef;
-            }
-            .form-group {
-                margin-bottom: 20px;
-            }
-            .form-group label {
-                display: block;
-                margin-bottom: 5px;
-                font-weight: bold;
-                color: #004a99;
-            }
-            .form-group input,
-            select {
-                width: 100%;
-                padding: 12px;
-                border: 1px solid #ccc;
-                border-radius: 6px;
-                background-color: #f8f9fa;
-                font-size: 16px;
-                transition: border-color 0.3s, box-shadow 0.3s;
-            }
-            .form-group input:focus,
-            select:focus {
-                border-color: #004a99;
-                box-shadow: 0 0 5px rgba(0, 74, 153, 0.5);
-                outline: none;
-            }
-            .btn {
-                display: block;
-                width: 100%;
-                background-color: #004a99;
-                color: white;
-                padding: 14px;
-                border: none;
-                border-radius: 6px;
-                font-size: 16px;
-                cursor: pointer;
-                transition: background 0.3s;
-                text-transform: uppercase;
-                font-weight: bold;
-            }
-            .btn:hover {
-                background-color: #003366;
-            }
-            .message {
-                margin-top: 20px;
-                padding: 10px;
-                border-radius: 6px;
-                text-align: center;
-                font-weight: bold;
-            }
-            .message.success {
-                background-color: #d4edda;
-                color: #155724;
-            }
-            .message.error {
-                background-color: #f8d7da;
-                color: #721c24;
-            }
-            /* Stile personalizzato per il menù a tendina */
-.custom-select {
-    position: relative;
-    width: 100%;
-    margin-bottom: 20px; /* Spaziatura inferiore */
-}
-
-.custom-select select {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-color: #f8f9fa;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    padding: 12px;
-    font-size: 16px;
-    cursor: pointer;
-    width: 100%;
-    color: #004a99;
-    font-family: "Roboto", sans-serif;
-    font-weight: 500;
-    transition: border-color 0.3s, box-shadow 0.3s;
-}
-
-.custom-select select:hover {
-    border-color: #004a99;
-}
-
-.custom-select select:focus {
-    border-color: #004a99;
-    box-shadow: 0 0 5px rgba(0, 74, 153, 0.5);
-    outline: none;
-}
-
-.custom-select::after {
-    content: "▼";
-    position: absolute;
-    top: 50%;
-    right: 15px;
-    transform: translateY(-50%);
-    pointer-events: none;
-    color: #004a99;
-    font-size: 12px;
-}
-        </style>
+        <link rel="stylesheet" href="/style.css" />
     </head>
     <body>
         <header>
@@ -167,27 +12,15 @@
             <h1>Severi - CRM Integration</h1>
         </header>
         <div class="container">
-            <!-- Aggiungi i campi per username e password -->
-            <h2>Login</h2>
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" required />
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" required />
-            </div>
-            <button id="loginBtn" class="btn">Login</button>
-            <div id="message" class="message"></div>
-            <!-- Area per il messaggio di esito -->
-
+            <!-- Menù a tendina per la selezione del cliente -->
             <h2>Seleziona un Cliente</h2>
             <div class="custom-select">
                 <select id="clientSelect">
-                    <option value="">-- SELEZIONA UN CLIENTE --</option>
+                    <option value="">-- Seleziona un cliente --</option>
                 </select>
             </div>
 
+            <!-- Tabella dei contratti attivi -->
             <h2>Contratti Attivi</h2>
             <table id="contractTable">
                 <thead>
@@ -209,6 +42,7 @@
                 </tfoot>
             </table>
 
+            <!-- Form per generare il PDF -->
             <h2>Genera PDF</h2>
             <form id="pdfForm">
                 <div class="form-group">
@@ -270,36 +104,20 @@
             // Funzione per caricare i clienti nel menù a tendina
             async function loadClients() {
                 try {
-                    // Ottieni username e password dai campi di input
-                    const username = document.getElementById("username").value;
-                    const password = document.getElementById("password").value;
-
-                    if (!username || !password) {
-                        showMessage("Inserisci username e password.", false);
+                    const token = localStorage.getItem("token");
+                    if (!token) {
+                        window.location.href = "/login.html"; // Reindirizza al login se non c'è un token
                         return;
                     }
 
-                    // Ottieni il token
-                    const tokenResponse = await fetch(
-                        `/getToken?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`,
-                    );
-                    if (!tokenResponse.ok) {
-                        throw new Error("Errore durante il login.");
-                    }
-                    const { token } = await tokenResponse.json();
-
-                    // Ottieni i dati dei clienti e dei contratti
                     const clientDataResponse = await fetch(
                         `/getClientData?token=${token}`,
                     );
                     if (!clientDataResponse.ok) {
-                        throw new Error(
-                            "Errore durante il caricamento dei clienti.",
-                        );
+                        throw new Error("Errore durante il caricamento dei clienti.");
                     }
                     const { clients } = await clientDataResponse.json();
 
-                    // Popola il menù a tendina
                     const clientSelect = document.getElementById("clientSelect");
                     clientSelect.innerHTML =
                         '<option value="">-- Seleziona un cliente --</option>'; // Resetta il menù
@@ -309,51 +127,31 @@
                         option.textContent = client[3]; // Mostra il nome del cliente
                         clientSelect.appendChild(option);
                     });
-
-                    // Mostra un messaggio di successo
-                    showMessage("Login effettuato con successo!", true);
                 } catch (error) {
                     console.error("Errore:", error);
-                    showMessage(
-                        "Errore durante il login. Verifica username e password.",
-                        false,
-                    );
+                    showMessage("Errore durante il caricamento dei clienti.", false);
                 }
             }
 
             // Funzione per visualizzare i contratti attivi del cliente selezionato
             async function displayContracts(selectedClient) {
                 try {
-                    // Ottieni username e password dai campi di input
-                    const username = document.getElementById("username").value;
-                    const password = document.getElementById("password").value;
-
-                    if (!username || !password) {
-                        showMessage("Inserisci username e password.", false);
+                    const token = localStorage.getItem("token");
+                    if (!token) {
+                        window.location.href = "/login.html"; // Reindirizza al login se non c'è un token
                         return;
                     }
 
-                    // Ottieni il token
-                    const tokenResponse = await fetch(
-                        `/getToken?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`,
-                    );
-                    const { token } = await tokenResponse.json();
-
-                    // Ottieni i dati dei clienti e dei contratti
                     const clientDataResponse = await fetch(
                         `/getClientData?token=${token}`,
                     );
                     const { contracts } = await clientDataResponse.json();
 
-                    // Filtra i contratti per il cliente selezionato
                     const filteredContracts = contracts.filter(
                         (contract) => contract[3] === selectedClient,
                     );
 
-                    // Popola la tabella
-                    const tableBody = document.querySelector(
-                        "#contractTable tbody",
-                    );
+                    const tableBody = document.querySelector("#contractTable tbody");
                     tableBody.innerHTML = "";
 
                     let totalAmount = 0;
@@ -375,214 +173,76 @@
                         tableBody.appendChild(row);
                     });
 
-                    // Aggiorna il totale generale
-                    document.getElementById("totalAmount").textContent =
-                        totalAmount.toFixed(2);
+                    document.getElementById("totalAmount").textContent = totalAmount.toFixed(2);
 
-                    // Ottieni i dettagli del cliente e compila il form
-                    const clientCode = filteredContracts[0][2]; // Codice cliente
+                    const clientCode = filteredContracts[0][2];
                     const clientDetailsResponse = await fetch(
                         `/getClientDetails?token=${token}&clientCode=${clientCode}`,
                     );
                     const { clientDetails } = await clientDetailsResponse.json();
 
-                    // Debug: Verifica i dettagli del cliente
-                    console.log("Dettagli del cliente:", clientDetails);
-
-                    // Controlla se clientDetails è definito e ha la struttura attesa
                     if (!clientDetails || !Array.isArray(clientDetails)) {
                         throw new Error("Dettagli del cliente non validi o incompleti.");
                     }
 
-                    // Compila il form con i dettagli del cliente
-                    document.getElementById("ragioneSociale").value =
-                        clientDetails[1] || ""; // Ragione Sociale
-                    document.getElementById("indirizzo").value =
-                        clientDetails[2] || ""; // Indirizzo
-                    document.getElementById("cap").value = clientDetails[3] || ""; // CAP
-                    document.getElementById("localita").value =
-                        clientDetails[4] || ""; // Località
-                    document.getElementById("provincia").value =
-                        clientDetails[5] || ""; // Provincia
-                    document.getElementById("partitaIva").value =
-                        clientDetails[6] || ""; // Partita IVA
-                    document.getElementById("codiceFiscale").value =
-                        clientDetails[7] || ""; // Codice Fiscale
-                    document.getElementById("telefono").value =
-                        clientDetails[8] || ""; // Telefono
-                    document.getElementById("email").value =
-                        clientDetails[10] || ""; // Email
-                    document.getElementById("banca").value =
-                        clientDetails[11] || ""; // Banca
-                    document.getElementById("iban").value =
-                        clientDetails[12] || ""; // IBAN
+                    document.getElementById("ragioneSociale").value = clientDetails[1] || "";
+                    document.getElementById("indirizzo").value = clientDetails[2] || "";
+                    document.getElementById("cap").value = clientDetails[3] || "";
+                    document.getElementById("localita").value = clientDetails[4] || "";
+                    document.getElementById("provincia").value = clientDetails[5] || "";
+                    document.getElementById("partitaIva").value = clientDetails[6] || "";
+                    document.getElementById("codiceFiscale").value = clientDetails[7] || "";
+                    document.getElementById("telefono").value = clientDetails[8] || "";
+                    document.getElementById("email").value = clientDetails[10] || "";
+                    document.getElementById("banca").value = clientDetails[11] || "";
+                    document.getElementById("iban").value = clientDetails[12] || "";
                 } catch (error) {
                     console.error("Errore:", error);
-                    showMessage(
-                        "Errore durante il caricamento dei contratti o dei dettagli del cliente.",
-                        false,
-                    );
+                    showMessage("Errore durante il caricamento dei contratti o dei dettagli del cliente.", false);
                 }
             }
 
-            // Funzione per generare il PDF
-            function generatePDF(
-                ragioneSociale,
-                indirizzo,
-                cap,
-                localita,
-                provincia,
-                partitaIva,
-                codiceFiscale,
-                telefono,
-                email,
-                banca,
-                iban,
-            ) {
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF({ unit: "mm", format: "a4" });
-
-                doc.setFont("helvetica", "bold");
-                doc.setFontSize(16);
-                doc.text("CONTRATTO DI ASSISTENZA SOFTWARE", 105, 20, {
-                    align: "center",
-                });
-
-                doc.setFontSize(12);
-                doc.setFont("helvetica", "normal");
-                doc.text(`Ragione Sociale: ${ragioneSociale}`, 20, 40);
-                doc.text(`Indirizzo: ${indirizzo}`, 20, 50);
-                doc.text(
-                    `CAP: ${cap} - Località: ${localita} - Provincia: ${provincia}`,
-                    20,
-                    60,
-                );
-                doc.text(`Partita IVA: ${partitaIva}`, 20, 70);
-                doc.text(`Codice Fiscale: ${codiceFiscale}`, 20, 80);
-                doc.text(`Telefono/Fax: ${telefono}`, 20, 90);
-                doc.text(`E-Mail: ${email}`, 20, 100);
-                doc.text(`Banca: ${banca}`, 20, 110);
-                doc.text(`IBAN: ${iban}`, 20, 120);
-
-                doc.setFont("helvetica", "bold");
-                doc.text("Dettagli del contratto:", 20, 130);
-
-                // Inserimento tabella contratti
-                const tableStartY = 140; // Posizione iniziale della tabella
-                const tableColumnWidths = [70, 30, 30, 30];
-                let tableRowY = tableStartY;
-
-                // Intestazione della tabella
-                doc.setFillColor(0, 74, 153);
-                doc.setTextColor(255, 255, 255);
-                doc.rect(20, tableRowY - 5, 160, 8, "F");
-                doc.text("Articolo", 25, tableRowY);
-                doc.text("Quantità", 95, tableRowY);
-                doc.text("Prezzo", 125, tableRowY);
-                doc.text("Totale", 155, tableRowY);
-
-                // Contenuto della tabella
-                doc.setFont("helvetica", "normal");
-                doc.setTextColor(0, 0, 0);
-
-                const rows = document.querySelectorAll(
-                    "#contractTable tbody tr",
-                );
-                let totalAmount = 0;
-
-                rows.forEach((row, index) => {
-                    const cols = row.querySelectorAll("td");
-                    const articolo = cols[0].innerText;
-                    const quantita = cols[1].innerText;
-                    const prezzo = cols[2].innerText;
-                    const totale = cols[3].innerText;
-
-                    totalAmount += parseFloat(totale);
-
-                    tableRowY += 10; // Aumenta la coordinata Y per ogni riga
-                    doc.text(articolo, 25, tableRowY);
-                    doc.text(quantita, 105, tableRowY, { align: "right" });
-                    doc.text(prezzo, 135, tableRowY, { align: "right" });
-                    doc.text(totale, 165, tableRowY, { align: "right" });
-                });
-
-                // Aggiungi spazio extra dopo l'ultima riga della tabella
-                tableRowY += 15; // Aumenta ulteriormente la coordinata Y per il "Totale Generale"
-
-                // Totale generale
-                doc.setFont("helvetica", "bold");
-                doc.text("Totale Generale:", 110, tableRowY); // Spostato a sinistra
-                doc.text(`${totalAmount.toFixed(2)} €`, 165, tableRowY, {
-                    align: "right",
-                }); // Allineato a destra
-
-                // Firma
-                tableRowY += 20; // Aggiungi spazio extra prima della firma
-                doc.text("Firma del Cliente", 20, tableRowY);
-                doc.line(20, tableRowY + 5, 80, tableRowY + 5);
-
-                doc.text("Firma della Società", 120, tableRowY);
-                doc.line(120, tableRowY + 5, 180, tableRowY + 5);
-
-                // Salva il PDF
-                doc.save(`Contratto_${ragioneSociale}.pdf`);
-            }
-
-            // Aggiungi un listener per il pulsante di login
-            document
-                .getElementById("loginBtn")
-                .addEventListener("click", async () => {
-                    await loadClients();
-                });
-
             // Aggiungi un listener per la selezione del cliente
-            document
-                .getElementById("clientSelect")
-                .addEventListener("change", async (event) => {
-                    const selectedClient = event.target.value;
-                    if (selectedClient) {
-                        await displayContracts(selectedClient);
-                    }
-                });
+            document.getElementById("clientSelect").addEventListener("change", async (event) => {
+                const selectedClient = event.target.value;
+                if (selectedClient) {
+                    await displayContracts(selectedClient);
+                }
+            });
 
             // Aggiungi un listener per il form di generazione del PDF
-            document
-                .getElementById("pdfForm")
-                .addEventListener("submit", (event) => {
-                    event.preventDefault();
+            document.getElementById("pdfForm").addEventListener("submit", (event) => {
+                event.preventDefault();
 
-                    // Ottieni i dati dal form
-                    const ragioneSociale =
-                        document.getElementById("ragioneSociale").value;
-                    const indirizzo = document.getElementById("indirizzo").value;
-                    const cap = document.getElementById("cap").value;
-                    const localita = document.getElementById("localita").value;
-                    const provincia =
-                        document.getElementById("provincia").value;
-                    const partitaIva =
-                        document.getElementById("partitaIva").value;
-                    const codiceFiscale =
-                        document.getElementById("codiceFiscale").value;
-                    const telefono = document.getElementById("telefono").value;
-                    const email = document.getElementById("email").value;
-                    const banca = document.getElementById("banca").value;
-                    const iban = document.getElementById("iban").value;
+                const ragioneSociale = document.getElementById("ragioneSociale").value;
+                const indirizzo = document.getElementById("indirizzo").value;
+                const cap = document.getElementById("cap").value;
+                const localita = document.getElementById("localita").value;
+                const provincia = document.getElementById("provincia").value;
+                const partitaIva = document.getElementById("partitaIva").value;
+                const codiceFiscale = document.getElementById("codiceFiscale").value;
+                const telefono = document.getElementById("telefono").value;
+                const email = document.getElementById("email").value;
+                const banca = document.getElementById("banca").value;
+                const iban = document.getElementById("iban").value;
 
-                    // Genera il PDF
-                    generatePDF(
-                        ragioneSociale,
-                        indirizzo,
-                        cap,
-                        localita,
-                        provincia,
-                        partitaIva,
-                        codiceFiscale,
-                        telefono,
-                        email,
-                        banca,
-                        iban,
-                    );
-                });
+                generatePDF(
+                    ragioneSociale,
+                    indirizzo,
+                    cap,
+                    localita,
+                    provincia,
+                    partitaIva,
+                    codiceFiscale,
+                    telefono,
+                    email,
+                    banca,
+                    iban,
+                );
+            });
+
+            // Carica i clienti all'avvio della pagina
+            loadClients();
         </script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     </body>

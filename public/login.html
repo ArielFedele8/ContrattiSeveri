@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="it">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Login - Severi CRM</title>
+        <link rel="stylesheet" href="/style.css" />
+    </head>
+    <body>
+        <div class="login-container">
+            <h1>Severi - CRM Integration</h1>
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" required />
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required />
+            </div>
+            <button id="loginBtn" class="btn">Login</button>
+            <div id="message" class="message"></div>
+        </div>
+
+        <script>
+            // Funzione per mostrare un messaggio di esito
+            function showMessage(message, isSuccess) {
+                const messageDiv = document.getElementById("message");
+                messageDiv.textContent = message;
+                messageDiv.className = `message ${isSuccess ? "success" : "error"}`;
+            }
+
+            // Funzione per gestire il login
+            async function handleLogin() {
+                try {
+                    const username = document.getElementById("username").value;
+                    const password = document.getElementById("password").value;
+
+                    if (!username || !password) {
+                        showMessage("Inserisci username e password.", false);
+                        return;
+                    }
+
+                    const tokenResponse = await fetch(
+                        `/getToken?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`,
+                    );
+                    if (!tokenResponse.ok) {
+                        throw new Error("Errore durante il login.");
+                    }
+                    const { token } = await tokenResponse.json();
+
+                    // Salva il token in localStorage e reindirizza alla pagina principale
+                    localStorage.setItem("token", token);
+                    window.location.href = "/index.html";
+                } catch (error) {
+                    console.error("Errore:", error);
+                    showMessage("Errore durante il login. Verifica username e password.", false);
+                }
+            }
+
+            // Aggiungi un listener per il pulsante di login
+            document.getElementById("loginBtn").addEventListener("click", handleLogin);
+        </script>
+    </body>
+</html>

@@ -1,0 +1,189 @@
+/* Stili globali */
+body {
+    font-family: "Roboto", sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #eef1f5;
+    color: #333;
+}
+
+header {
+    background-color: #004a99;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+header img {
+    max-width: 350px;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+h1,
+h2 {
+    color: #004a99;
+    text-align: center;
+    font-weight: bold;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+th,
+td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    background-color: #004a99;
+    color: white;
+}
+
+tfoot td {
+    font-weight: bold;
+    background-color: #e9ecef;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #004a99;
+}
+
+.form-group input,
+select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #f8f9fa;
+    font-size: 16px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-group input:focus,
+select:focus {
+    border-color: #004a99;
+    box-shadow: 0 0 5px rgba(0, 74, 153, 0.5);
+    outline: none;
+}
+
+.btn {
+    display: block;
+    width: 100%;
+    background-color: #004a99;
+    color: white;
+    padding: 14px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.btn:hover {
+    background-color: #003366;
+}
+
+.message {
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.message.success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Stile per il menù a tendina */
+.custom-select {
+    position: relative;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.custom-select select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: #f8f9fa;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    color: #004a99;
+    font-family: "Roboto", sans-serif;
+    font-weight: 500;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.custom-select select:hover {
+    border-color: #004a99;
+}
+
+.custom-select select:focus {
+    border-color: #004a99;
+    box-shadow: 0 0 5px rgba(0, 74, 153, 0.5);
+    outline: none;
+}
+
+.custom-select::after {
+    content: "▼";
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #004a99;
+    font-size: 12px;
+}
+
+/* Stile per la pagina di login */
+.login-container {
+    max-width: 400px;
+    margin: 100px auto;
+    padding: 30px;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    text-align: center;
+}
+
+.login-container h1 {
+    color: #004a99;
+    margin-bottom: 20px;
+}

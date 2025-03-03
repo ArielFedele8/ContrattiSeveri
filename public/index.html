@@ -21,7 +21,7 @@
             </div>
 
             <!-- Tabella dei contratti attivi -->
-            <h2>Contratti Attivi</h2>
+            <h2>Licenza</h2>
             <table id="contractTable">
                 <thead>
                     <tr>
@@ -41,7 +41,30 @@
                     </tr>
                 </tfoot>
             </table>
-
+            <!-- Nuova tabella -->
+            <h2>Assistenza</h2>
+            <table id="contractTableASS">
+                <thead>
+                    <tr>
+                        <th>Articolo</th>
+                        <th>Quantità</th>
+                        <th>Prezzo</th>
+                        <th>Ore</th>
+                        <th>Totale</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dettagli verranno inseriti qui -->
+                </tbody>
+                <tfoot>
+                    <tr>
+                        
+                        <td colspan="3">Totali</td>
+                        <td id="totalHoursASS">0</td>
+                        <td id="totalAmountASS">0</td>
+                    </tr>
+                </tfoot>
+            </table>
             <!-- Form per generare il PDF -->
             <h2>Genera PDF</h2>
             <form id="pdfForm">
@@ -135,72 +158,126 @@
 
             // Funzione per visualizzare i contratti attivi del cliente selezionato
             async function displayContracts(selectedClient) {
-                try {
-                    const token = localStorage.getItem("token");
-                    if (!token) {
-                        window.location.href = "/login.html"; // Reindirizza al login se non c'è un token
-                        return;
-                    }
+    try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            window.location.href = "/login.html"; // Reindirizza al login se non c'è un token
+            return;
+        }
 
-                    const clientDataResponse = await fetch(
-                        `/getClientData?token=${token}`,
-                    );
-                    const { contracts } = await clientDataResponse.json();
+        const clientDataResponse = await fetch(`/getClientData?token=${token}`);
+        const { contracts } = await clientDataResponse.json();
 
-                    const filteredContracts = contracts.filter(
-                        (contract) => contract[3] === selectedClient,
-                    );
+        const filteredContracts = contracts.filter(
+            (contract) => contract[3] === selectedClient,
+        );
 
-                    const tableBody = document.querySelector("#contractTable tbody");
-                    tableBody.innerHTML = "";
+        const tableBody = document.querySelector("#contractTable tbody");
+        tableBody.innerHTML = "";
 
-                    let totalAmount = 0;
+        let totalAmount = 0;
 
-                    filteredContracts.forEach((contract) => {
-                        const quantity = parseFloat(contract[5]);
-                        const price = parseFloat(contract[6]);
-                        const total = quantity * price;
+        // Mappatura dei codici ASS con ore e prezzi
+        const assMapping = {
+            "ILMEMIXSAP": { code: "ILMEMIXASS", hours: 2, price: 250 },
+            "ILMESOLSAP": { code: "ILMESOLASS", hours: 1, price: 80 },
+            "ILMEAZISAP": { code: "ILMEAZIASS", hours: 2, price: 120 },
+            "ILMECONSAP": { code: "ILMECONASS", hours: 2, price: 120 },
+            "ILMEPROSAP": { code: "ILMEPROASS", hours: 3, price: 150 },
+            "ILMEFCTSAP": { code: "ILMEFCTASS", hours: 3, price: 150 },
+            "ILMEAGGSAP": { code: "ILMEAGGASS", hours: 0.5, price: 50 },
+        };
 
-                        totalAmount += total;
+        // Popola la prima tabella (SAP)
+        filteredContracts.forEach((contract) => {
+            const quantity = parseFloat(contract[5]);
+            const price = parseFloat(contract[6]);
+            const total = quantity * price;
 
-                        const row = document.createElement("tr");
-                        row.innerHTML = `
-                            <td>${contract[4]}</td>
-                            <td>${quantity}</td>
-                            <td>${price.toFixed(2)}</td>
-                            <td>${total.toFixed(2)}</td>
-                        `;
-                        tableBody.appendChild(row);
-                    });
+            totalAmount += total;
 
-                    document.getElementById("totalAmount").textContent = totalAmount.toFixed(2);
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${contract[4]}</td>
+                <td>${quantity}</td>
+                <td>${price.toFixed(2)}</td>
+                <td>${total.toFixed(2)}</td>
+            `;
+            tableBody.appendChild(row);
+        });
 
-                    const clientCode = filteredContracts[0][2];
-                    const clientDetailsResponse = await fetch(
-                        `/getClientDetails?token=${token}&clientCode=${clientCode}`,
-                    );
-                    const { clientDetails } = await clientDetailsResponse.json();
+        document.getElementById("totalAmount").textContent = totalAmount.toFixed(2);
 
-                    if (!clientDetails || !Array.isArray(clientDetails)) {
-                        throw new Error("Dettagli del cliente non validi o incompleti.");
-                    }
+        // Popola la seconda tabella (ASS)
+        const tableBodyASS = document.querySelector("#contractTableASS tbody");
+        tableBodyASS.innerHTML = "";
 
-                    document.getElementById("ragioneSociale").value = clientDetails[1] || "";
-                    document.getElementById("indirizzo").value = clientDetails[2] || "";
-                    document.getElementById("cap").value = clientDetails[3] || "";
-                    document.getElementById("localita").value = clientDetails[4] || "";
-                    document.getElementById("provincia").value = clientDetails[5] || "";
-                    document.getElementById("partitaIva").value = clientDetails[6] || "";
-                    document.getElementById("codiceFiscale").value = clientDetails[7] || "";
-                    document.getElementById("telefono").value = clientDetails[8] || "";
-                    document.getElementById("email").value = clientDetails[10] || "";
-                    document.getElementById("banca").value = clientDetails[11] || "";
-                    document.getElementById("iban").value = clientDetails[12] || "";
-                } catch (error) {
-                    console.error("Errore:", error);
-                    showMessage("Errore durante il caricamento dei contratti o dei dettagli del cliente.", false);
+        let totalHoursASS = 0;
+        let totalAmountASS = 0;
+
+        filteredContracts.forEach((contract) => {
+            const sapCode = contract[4];
+            const quantity = parseFloat(contract[5]);
+
+            if (assMapping[sapCode]) {
+                const assCode = assMapping[sapCode].code;
+                const hours = assMapping[sapCode].hours;
+                const price = assMapping[sapCode].price;
+
+                // Calcola la quantità per ILMEAGGASS
+                let assQuantity = quantity;
+                if (sapCode === "ILMEAGGSAP") {
+                    assQuantity = 1 + quantity; // Quantità minima 1 + quantità di ILMEAGGSAP
                 }
+
+                const totalHours = hours * assQuantity;
+                const totalPrice = price * assQuantity;
+
+                totalHoursASS += totalHours;
+                totalAmountASS += totalPrice;
+
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${assCode}</td>
+                    <td>${assQuantity}</td>
+                    <td>${price.toFixed(2)}</td>
+                    <td>${totalHours.toFixed(2)}</td>
+                    <td>${totalPrice.toFixed(2)}</td>
+                `;
+                tableBodyASS.appendChild(row);
             }
+        });
+
+        document.getElementById("totalHoursASS").textContent = totalHoursASS.toFixed(2);
+        document.getElementById("totalAmountASS").textContent = totalAmountASS.toFixed(2);
+
+        // Carica i dettagli del cliente
+        const clientCode = filteredContracts[0][2];
+        const clientDetailsResponse = await fetch(
+            `/getClientDetails?token=${token}&clientCode=${clientCode}`,
+        );
+        const { clientDetails } = await clientDetailsResponse.json();
+
+        if (!clientDetails || !Array.isArray(clientDetails)) {
+            throw new Error("Dettagli del cliente non validi o incompleti.");
+        }
+
+        document.getElementById("ragioneSociale").value = clientDetails[1] || "";
+        document.getElementById("indirizzo").value = clientDetails[2] || "";
+        document.getElementById("cap").value = clientDetails[3] || "";
+        document.getElementById("localita").value = clientDetails[4] || "";
+        document.getElementById("provincia").value = clientDetails[5] || "";
+        document.getElementById("partitaIva").value = clientDetails[6] || "";
+        document.getElementById("codiceFiscale").value = clientDetails[7] || "";
+        document.getElementById("telefono").value = clientDetails[8] || "";
+        document.getElementById("email").value = clientDetails[10] || "";
+        document.getElementById("banca").value = clientDetails[11] || "";
+        document.getElementById("iban").value = clientDetails[12] || "";
+    } catch (error) {
+        console.error("Errore:", error);
+        showMessage("Errore durante il caricamento dei contratti o dei dettagli del cliente.", false);
+    }
+}
             
             function generatePDF(
                 ragioneSociale,
@@ -303,7 +380,7 @@
                 // Salva il PDF
                 doc.save(`Contratto_${ragioneSociale}.pdf`);
             }
-            
+
             // Aggiungi un listener per la selezione del cliente
             document.getElementById("clientSelect").addEventListener("change", async (event) => {
                 const selectedClient = event.target.value;

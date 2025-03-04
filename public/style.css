@@ -187,3 +187,8 @@ select:focus {
     color: #004a99;
     margin-bottom: 20px;
 }
+
+.login-container img {
+    width: 360px; /* Regola la dimensione del logo */
+    margin-bottom: 20px;
+}

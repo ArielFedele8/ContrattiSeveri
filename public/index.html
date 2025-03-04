@@ -332,17 +332,17 @@ function generatePDF(
         60,
     );
     doc.text(`Partita IVA: ${partitaIva}`, 20, 70);
-    doc.text(`Codice Fiscale: ${codiceFiscale}`, 20, 80);
-    doc.text(`Telefono/Fax: ${telefono}`, 20, 90);
-    doc.text(`E-Mail: ${email}`, 20, 100);
-    doc.text(`Banca: ${banca}`, 20, 110);
-    doc.text(`IBAN: ${iban}`, 20, 120);
+    doc.text(`Codice Fiscale: ${codiceFiscale}`, 80, 70);
+    doc.text(`Telefono/Fax: ${telefono}`, 20, 80);
+    doc.text(`E-Mail: ${email}`, 20, 90);
+    doc.text(`Banca: ${banca}`, 20, 100);
+    doc.text(`IBAN: ${iban}`, 20, 110);
 
     doc.setFont("helvetica", "bold");
-    doc.text("Dettagli del contratto (SAP):", 20, 130);
+    doc.text("Dettagli del contratto (SAP):", 20, 120);
 
     // Prima tabella (SAP)
-    const tableStartYSAP = 140; // Posizione iniziale della prima tabella
+    const tableStartYSAP = 130; // Posizione iniziale della prima tabella
     const tableColumnWidthsSAP = [70, 30, 30, 30];
     let tableRowYSAP = tableStartYSAP;
 
@@ -441,14 +441,6 @@ function generatePDF(
         align: "right",
     });
 
-    // Firma
-    const firmaY = tableRowYASS + 30; // Aggiungi spazio extra prima della firma
-    doc.text("Firma del Cliente", 20, firmaY);
-    doc.line(20, firmaY + 5, 80, firmaY + 5);
-
-    doc.text("Firma della Società", 120, firmaY);
-    doc.line(120, firmaY + 5, 180, firmaY + 5);
-
     // Salva il PDF
     doc.save(`Contratto_${ragioneSociale}.pdf`);
 }
@@ -494,6 +486,15 @@ function generatePDF(
 
             // Carica i clienti all'avvio della pagina
             loadClients();
+            // Verifica il token all'avvio della pagina
+    document.addEventListener("DOMContentLoaded", function () {
+        const token = localStorage.getItem("token");
+
+        // Se il token non è presente o non è valido, reindirizza alla pagina di login
+        if (!token) {
+            window.location.href = "/login.html";
+        }
+    });
         </script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     </body>
